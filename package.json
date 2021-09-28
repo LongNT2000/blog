@@ -1,0 +1,29 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "test express",
+  "main": "index.js",
+  "scripts": {
+    "start":"nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LongNT2000/blog.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "Thanh Long",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LongNT2000/blog/issues"
+  },
+  "homepage": "https://github.com/LongNT2000/blog#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
