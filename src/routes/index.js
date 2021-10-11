@@ -1,4 +1,5 @@
 const formRouter = require('./form');
+const course = require('./course');
 
 function route(app) {
     app.use('/fu', formRouter);
@@ -12,5 +13,7 @@ function route(app) {
         console.log(req.body);
         res.render('form');
     });
+
+    app.use('/course', course);
 }
 module.exports = route;
