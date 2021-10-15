@@ -31,12 +31,50 @@ class CourseController {
     //[POST] course/store
     store(req, res, next) {
         const formData = req.body;
-        formData.image = `https://i.ytimg.com/vi/${req.videoId}/sddefault.jpg`;
+        formData.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
         const courses = new course(formData);
         courses
             .save()
             .then(() => res.redirect('/course'))
             .catch((error) => {});
+    }
+    //[GET] /course/list
+    list(req, res, next) {
+        course
+            .find({})
+            .then((courses) => {
+                res.render('courses/list', {
+                    courses: multipleMongooseToObject(courses),
+                });
+            })
+            .catch(next);
+    }
+    //[GET] /course/:id/edit
+    edit(req, res, next) {
+        course
+            .findById(req.params.id)
+            .then((course) => {
+                res.render('courses/edit', {
+                    course: mongooseToObject(course),
+                });
+            })
+            .catch(next);
+    }
+    //[PUT] /course/update/:id
+    update(req, res, next) {
+        const formData = req.body;
+        formData.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
+        course
+            .updateOne({ _id: req.params.id }, formData)
+            .then(() => res.redirect('/course/list'))
+            .catch(next);
+    }
+    //[delete] /course/delete/:id
+    destroy(req, res, next) {
+        course
+            .deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('/course/list'))
+            .catch(next);
     }
     // show(req, res) {
     //     course.find({}, function (err, courses) {

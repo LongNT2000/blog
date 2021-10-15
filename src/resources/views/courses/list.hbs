@@ -1,0 +1,63 @@
+<div class="mt-5 mb-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tên khóa học</th>
+                <th scope="col">Mô tả</th>
+                <th scope="col">Hình ảnh</th>
+                <th scope="col" colspan="2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses as | course|}}
+            <tr>
+                <th scope="row">{{sum @index 1}}</th>
+                <td>{{course.name}}</td>
+                <td>{{course.description}}</td>
+                <td><img class="list-img-course" src="{{course.image}}" alt=""></td>
+                <td>
+                    <button><a href="/course/{{course._id}}/edit">sửả</a></button>
+                    <button data-toggle="modal" data-id="{{course._id}}" data-target="#deleteModal">Xóa</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+{{!-- form hidden submit --}}
+<form method="POST" id="form-hidden-submit" ></form>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Bạn chắc chắn muốn xóa ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Sau khi xóa dữ liệu sẽ không thể  khôi phục
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-delete-course btn-primary">Xóa</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded",function(){
+        var id=0;
+        $("#deleteModal").on('show.bs.modal',function(event){
+            var button=$(event.relatedTarget);
+            id=button.data("id");
+        })
+        $(".btn-delete-course").on("click",function(){
+            var link="/course/delete/"+id+"?_method=DELETE";
+            $("#form-hidden-submit").attr("action",link);
+            $("#form-hidden-submit").submit();
+        })
+    })
+</script>
