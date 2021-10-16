@@ -1,5 +1,5 @@
 <div class="mt-5 mb-5">
-    <a href="/course/trash">Thùng rác ({{countDelete}})</a>
+    <a href="/course/list">Quay lại</a>
     <table class="table mt-4">
         <thead>
             <tr>
@@ -18,28 +18,35 @@
                 <td>{{course.description}}</td>
                 <td><img class="list-img-course" src="{{course.image}}" alt=""></td>
                 <td>
-                    <button><a href="/course/{{course._id}}/edit">sửả</a></button>
-                    <button data-toggle="modal" data-id="{{course._id}}" data-target="#deleteModal">Xóa</button>
+                    <button class="btn-restore-course" data-id="{{course._id}}">Khôi phục</button>
+                    <button data-toggle="modal" data-id="{{course._id}}" data-target="#deleteModal">Xóa vĩnh viễn</button>
                 </td>
+            </tr>
+            {{else}}
+            <tr>
+              <td colspan="6">
+                Thùng rác trống !! <a href="/course/create">Tạo khóa học</a>
+              </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
 {{!-- form hidden submit --}}
-<form method="POST" id="form-hidden-submit" ></form>
+<form method="POST" id="form-hidden-restore" ></form>
+<form method="POST" id="form-hidden-force" ></form>
 
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Bạn chắc chắn muốn xóa ?</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Bạn chắc chắn muốn xóa vĩnh viễn ?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Sau khi xóa dữ liệu sẽ được cho vào thùng rác
+        Sau khi xóa dữ liệu sẽ không thể  khôi phục
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -50,15 +57,22 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded",function(){
-        var id=0;
+        var delete_id=0;
         $("#deleteModal").on('show.bs.modal',function(event){
             var button=$(event.relatedTarget);
-            id=button.data("id");
+            delete_id=button.data("id");
         })
         $(".btn-delete-course").on("click",function(){
-            var link="/course/delete/"+id+"?_method=PATCH";
-            $("#form-hidden-submit").attr("action",link);
-            $("#form-hidden-submit").submit();
+            var link="/course/"+delete_id+"/force?_method=DELETE";
+            $("#form-hidden-force").attr("action",link);
+            $("#form-hidden-force").submit();
+        })
+
+        $(".btn-restore-course").on("click",function(){
+            var id= $(this).data("id");
+            var link="/course/"+id+"/restore?_method=PATCH";
+            $("#form-hidden-restore").attr("action",link);
+            $("#form-hidden-restore").submit();
         })
     })
 </script>

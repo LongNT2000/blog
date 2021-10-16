@@ -30,9 +30,8 @@ class CourseController {
     }
     //[POST] course/store
     store(req, res, next) {
-        const formData = req.body;
-        formData.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
-        const courses = new course(formData);
+        req.body.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
+        const courses = new course(req.body);
         courses
             .save()
             .then(() => res.redirect('/course'))
@@ -40,10 +39,10 @@ class CourseController {
     }
     //[GET] /course/list
     list(req, res, next) {
-        course
-            .find({})
-            .then((courses) => {
+        Promise.all([course.find({}), course.countDocumentsDeleted()])
+            .then(([courses, countDelete]) => {
                 res.render('courses/list', {
+                    countDelete,
                     courses: multipleMongooseToObject(courses),
                 });
             })
@@ -62,18 +61,42 @@ class CourseController {
     }
     //[PUT] /course/update/:id
     update(req, res, next) {
-        const formData = req.body;
-        formData.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
+        req.body.image = `https://i.ytimg.com/vi/${req.body.videoId}/sddefault.jpg`;
         course
-            .updateOne({ _id: req.params.id }, formData)
+            .updateOne({ _id: req.params.id }, req.body)
             .then(() => res.redirect('/course/list'))
             .catch(next);
     }
-    //[delete] /course/delete/:id
+    //[PATCH] /course/delete/:id
     destroy(req, res, next) {
         course
-            .deleteOne({ _id: req.params.id })
+            .delete({ _id: req.params.id })
             .then(() => res.redirect('/course/list'))
+            .catch(next);
+    }
+    //[GET] /course/trash
+    trash(req, res, next) {
+        course
+            .findDeleted({})
+            .then((courses) => {
+                res.render('courses/trash', {
+                    courses: multipleMongooseToObject(courses),
+                });
+            })
+            .catch(next);
+    }
+    //[PATCH] /:id/restore
+    restore(req, res, next) {
+        course
+            .restore({ _id: req.params.id })
+            .then(() => res.redirect('/course/trash'))
+            .catch(next);
+    }
+    //[DELETE] /:id/force
+    force(req, res, next) {
+        course
+            .deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('/course/trash'))
             .catch(next);
     }
     // show(req, res) {

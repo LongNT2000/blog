@@ -16,7 +16,13 @@ router.post('/store', courseController.store);
 
 router.put('/update/:id', courseController.update);
 
-router.delete('/delete/:id', courseController.destroy);
+router.patch('/delete/:id', courseController.destroy);
+
+router.get('/trash', courseController.trash);
+
+router.patch('/:id/restore', courseController.restore);
+
+router.delete('/:id/force', courseController.force);
 
 router.get('/:slug', courseController.detail);
 
